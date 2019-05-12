@@ -1,0 +1,50 @@
+stages:
+  - test
+
+.python:
+  image: python:3.7
+  stage: test
+  cache:
+    key: pip-cache
+    paths:
+      - .cache/pip
+      - .pytest_cache
+  variables:
+    PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  before_script:
+    - pip install poetry
+    - poetry debug:info
+    - poetry config settings.virtualenvs.create false
+    - poetry --no-interaction install
+
+pytest:
+  extends: .python
+  script:
+    - pytest --junitxml=pytest.xml --vcr-record=none
+    - coveralls
+  artifacts:
+    reports:
+      junit: pytest.xml
+  coverage: '/^TOTAL\s+\d+\s+\d+\s+(\d+\%)$/'
+
+flake8:
+  extends: .python
+  script:
+    - flake8 --format=junit-xml --output-file flake8.xml
+  artifacts:
+    reports:
+      junit: flake8.xml
+
+black:
+  extends: .python
+  cache:
+    key: black-cache
+    paths:
+    - .cache/pip
+  variables:
+    PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  before_script:
+    - pip install -U black
+  script:
+    - black --check --verbose .
+  artifacts: {}
