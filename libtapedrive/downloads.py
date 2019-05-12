@@ -4,7 +4,7 @@ from urllib.error import HTTPError, URLError
 
 import requests
 import feedparser
-from tqdm import tqdm
+import enlighten
 
 from libtapedrive import __version__, __source__
 
@@ -70,37 +70,41 @@ def download_file(link, filename, progress=False, chunk_size=8192, overwrite=Fal
         logger.error("File at %s already exists" % filename)
         return
 
-    # Create the subdir, if it does not exist
     directory = os.path.dirname(filename)
-    if directory:
+    if directory and directory != ".":
         os.makedirs(directory, exist_ok=True)
 
     try:
-        with session.get(link, stream=True, allow_redirects=True) as response:
-            response.raise_for_status()
-            logger.debug("Resolved link:", response.url)
+        return _download_file(link, filename, chunk_size, progress)
 
-            # Check for proper content length, with resolved link
-            total_size = int(response.headers.get("content-length", "0"))
-            if total_size == 0:
-                logger.error("Received content-length is 0")
-                return
-            if progress:
-                pbar = tqdm(total=total_size, desc=filename, unit="B", unit_scale=True)
-
-            with open(filename, mode="wb") as outfile:
-                for chunk in response.iter_content(chunk_size=chunk_size):
-                    if chunk:  # filter out keep-alive new chunks
-                        outfile.write(chunk)
-                        if progress:
-                            pbar.update(len(chunk))
-
-        return total_size
-
-    except (HTTPError, URLError) as error:
-        logger.error("Download failed. Query returned '%s'" % error)
-        return
+    except (HTTPError, URLError):
+        logger.error("Download failed.", exc_info=True)
     except KeyboardInterrupt:
         logger.error("Unexpected interruption. Deleting unfinished file")
         os.remove(filename)
-        return
+
+    return 0
+
+
+def _download_file(link, filename, chunk_size, progress):
+    with session.get(link, stream=True, allow_redirects=True) as resp, open(
+        filename, "wb"
+    ) as out:
+        resp.raise_for_status()
+        if resp.url != link:
+            logger.info(f"Original link: {link}")
+            logger.info(f"Resolved link: {resp.url}")
+
+        total_size = int(resp.headers.get("content-length", "0"))
+        if total_size == 0:
+            raise URLError("Received content-length is 0")
+
+        pbar = enlighten.Counter(
+            total=total_size, desc=filename, enabled=progress, unit="B", min_delta=0.5
+        )
+
+        for chunk in resp.iter_content(chunk_size=chunk_size):
+            out.write(chunk)
+            pbar.update(len(chunk))
+    return total_size
+
