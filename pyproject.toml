@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "libtapedrive"
-version = "0.1.0"
+version = "0.1.1"
 description = "Podcast client library for feed parsing"
 authors = ["Jan Willhaus <mail@janwillhaus.de>"]
 license = "Apache-2.0"

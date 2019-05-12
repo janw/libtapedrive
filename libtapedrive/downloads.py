@@ -103,4 +103,3 @@ def _download_file(link, filename, chunk_size, progress):
             out.write(chunk)
             pbar.update(len(chunk))
     return total_size
-

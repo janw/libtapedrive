@@ -1,5 +1,6 @@
 stages:
   - test
+  - publish
 
 .python:
   image: python:3.7
@@ -48,3 +49,16 @@ black:
   script:
     - black --check --verbose .
   artifacts: {}
+
+publish:
+  extends: .python
+  stage: publish
+  before_script:
+    - pip install poetry
+    - poetry debug:info
+    - poetry config settings.virtualenvs.create false
+    - poetry config http-basic.pypi "${PYPI_USERNAME}" "${PYPI_PASSWORD}"
+  script:
+    - poetry --build publish
+  only:
+    - tags
