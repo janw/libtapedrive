@@ -76,7 +76,6 @@ def download_file(link, filename, progress=False, chunk_size=8192, overwrite=Fal
 
     try:
         return _download_file(link, filename, chunk_size, progress)
-
     except (HTTPError, URLError):
         logger.error("Download failed.", exc_info=True)
     except KeyboardInterrupt:
@@ -96,9 +95,6 @@ def _download_file(link, filename, chunk_size, progress):
             logger.info(f"Resolved link: {resp.url}")
 
         total_size = int(resp.headers.get("content-length", "0"))
-        if total_size == 0:
-            raise URLError("Received content-length is 0")
-
         pbar = enlighten.Counter(
             total=total_size, desc=filename, enabled=progress, unit="B", min_delta=0.5
         )

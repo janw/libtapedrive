@@ -1,0 +1,137 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - Libtapedrive/0.1.0 (+https://github.com/janw/libtapedrive)
+    method: GET
+    uri: https://github.com/janw/libtapedrive/raw/master/tests/fixtures/testfile.bin
+  response:
+    body:
+      string: <html><body>You are being <a href="https://raw.githubusercontent.com/janw/libtapedrive/master/tests/fixtures/testfile.bin">redirected</a>.</body></html>
+    headers:
+      Access-Control-Allow-Origin:
+      - https://render.githubusercontent.com
+      Age:
+      - '0'
+      Cache-Control:
+      - no-cache
+      Content-Length:
+      - '152'
+      Content-Security-Policy:
+      - 'default-src ''none''; base-uri ''self''; block-all-mixed-content; connect-src
+        ''self'' uploads.github.com www.githubstatus.com collector.githubapp.com api.github.com
+        www.google-analytics.com github-cloud.s3.amazonaws.com github-production-repository-file-5c1aeb.s3.amazonaws.com
+        github-production-upload-manifest-file-7fdce7.s3.amazonaws.com github-production-user-asset-6210df.s3.amazonaws.com
+        wss://live.github.com; font-src github.githubassets.com; form-action ''self''
+        github.com gist.github.com; frame-ancestors ''none''; frame-src render.githubusercontent.com;
+        img-src ''self'' data: github.githubassets.com identicons.github.com collector.githubapp.com
+        github-cloud.s3.amazonaws.com *.githubusercontent.com; manifest-src ''self'';
+        media-src ''none''; script-src github.githubassets.com; style-src ''unsafe-inline''
+        github.githubassets.com'
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sun, 12 May 2019 15:11:35 GMT
+      Expect-CT:
+      - max-age=2592000, report-uri="https://api.github.com/_private/browser/errors"
+      Location:
+      - https://raw.githubusercontent.com/janw/libtapedrive/master/tests/fixtures/testfile.bin
+      Server:
+      - GitHub.com
+      Status:
+      - 302 Found
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains; preload
+      Vary:
+      - X-PJAX
+      - Accept-Encoding
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - deny
+      X-GitHub-Request-Id:
+      - D99C:397F5:21E4814:32E6FAE:5CD837A7
+      X-XSS-Protection:
+      - 1; mode=block
+    status:
+      code: 302
+      message: Found
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - Libtapedrive/0.1.0 (+https://github.com/janw/libtapedrive)
+    method: GET
+    uri: https://raw.githubusercontent.com/janw/libtapedrive/master/tests/fixtures/testfile.bin
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAAwvJyCxWAKJEhZLU4pK0zJxUhbT8IoWU/PK8nPzElMy8dD0uAIVPGKgkAAAA
+    headers:
+      Accept-Ranges:
+      - bytes
+      Access-Control-Allow-Origin:
+      - '*'
+      Cache-Control:
+      - max-age=300
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Length:
+      - '54'
+      Content-Security-Policy:
+      - default-src 'none'; style-src 'unsafe-inline'; sandbox
+      Content-Type:
+      - text/plain; charset=utf-8
+      Date:
+      - Sun, 12 May 2019 15:11:35 GMT
+      ETag:
+      - '"1e3421de13fcf0de9505c957289fea98ad7d7396"'
+      Expires:
+      - Sun, 12 May 2019 15:16:35 GMT
+      Source-Age:
+      - '280'
+      Strict-Transport-Security:
+      - max-age=31536000
+      Vary:
+      - Authorization,Accept-Encoding
+      Via:
+      - 1.1 varnish
+      X-Cache:
+      - HIT
+      X-Cache-Hits:
+      - '1'
+      X-Content-Type-Options:
+      - nosniff
+      X-Fastly-Request-ID:
+      - 0cf2b218828b9ab2bbc7c7a4b9a0b34ea9190d3e
+      X-Frame-Options:
+      - deny
+      X-Geo-Block-List:
+      - ''
+      X-GitHub-Request-Id:
+      - A4A8:5122:32FC42:3C09D4:5CD8368F
+      X-Served-By:
+      - cache-hhn1530-HHN
+      X-Timer:
+      - S1557673896.850584,VS0,VE1
+      X-XSS-Protection:
+      - 1; mode=block
+    status:
+      code: 200
+      message: OK
+version: 1
