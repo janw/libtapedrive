@@ -54,6 +54,8 @@ publish:
   extends: .python
   stage: publish
   before_script:
+    - export LIB_VERSION=$(grep -Eo '__version__.*$' libtapedrive/__init__.py | sed -E 's/.*\=.\"(.+)\"/\1/')
+    - '[[ $LIB_VERSION == $CI_COMMIT_TAG ]] || exit 1'
     - pip install poetry
     - poetry debug:info
     - poetry config settings.virtualenvs.create false
