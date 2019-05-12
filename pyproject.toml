@@ -4,6 +4,23 @@ version = "0.1.0"
 description = "Podcast client library for feed parsing"
 authors = ["Jan Willhaus <mail@janwillhaus.de>"]
 license = "Apache-2.0"
+readme = "README.md"
+homepage = "https://tapedrive.io/lib"
+repository = "https://github.com/janw/libtapedrive"
+documentation = "https://libtapedrive.readthedocs.io/en/latest/"
+classifiers = [
+  "Development Status :: 1 - Planning",
+  "Intended Audience :: Developers",
+  "Operating System :: POSIX",
+  "Programming Language :: Python :: 3.7",
+  "Programming Language :: Python :: 3 :: Only",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Topic :: Utilities"
+]
+packages = [
+  { include = "libtapedrive" },
+]
+
 
 [tool.poetry.dependencies]
 python = "^3.7"
