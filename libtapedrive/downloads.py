@@ -1,12 +1,15 @@
 import os
 import logging
+from io import BytesIO
+from urllib.parse import urlparse, urlunparse
 from urllib.error import HTTPError, URLError
 
 import requests
 import feedparser
 import enlighten
+from PIL import Image
 
-from libtapedrive import __version__, __source__
+from libtapedrive import __version__, __source__, defaults
 
 USER_AGENT = f"Libtapedrive/{__version__} (+{__source__})"
 HEADERS = {"User-Agent": USER_AGENT}
@@ -103,3 +106,68 @@ def _download_file(link, filename, chunk_size, progress):
             out.write(chunk)
             pbar.update(len(chunk))
     return total_size
+
+
+def download_cover(img_url, file):
+    logger.info("Downloading cover")
+
+    # Remove query params from URL (could be size-restricting, example: NPR's Invisibilia)
+    # Of course that does not work on for example private feeds that use query params for
+    # authentication (example: Do By Friday Aftershow delivered via Patreon using
+    # token-time&token-hash)
+    url = urlparse(img_url)
+    logger.debug("Query params (removed on first try): %s", url.query)
+    url = url._replace(query="")
+    unqueried_img_url = urlunparse(url)
+    response = requests.get(unqueried_img_url, headers=HEADERS, allow_redirects=True)
+    if response.status_code >= 400:
+        logger.info("Failed without query string, trying again.")
+        # If that fails, try again with the original URL. After that fail softly
+        response = requests.get(img_url, headers=HEADERS, allow_redirects=True)
+        if response.status_code >= 400:
+            return
+        else:
+            logger.info("Success.")
+
+    name = url.path.split("/")[-1]
+    name, ext = os.path.splitext(name)
+    target_img_size = defaults.COVER_IMAGE_SIZE
+    finput = BytesIO(response.content)
+    img = Image.open(finput)
+    logger.debug("Original image size is %dx%d." % img.size)
+
+    # Return early and untouched if the image is smaller than desired
+    if img.size[0] < target_img_size[0] or img.size[1] < target_img_size[1]:
+        logger.info("Image size is smaller than desired. Ain't (re)touching that.")
+        finput.seek(0)
+        file.write(finput.read())
+        file.seek(0)
+        return name + ext
+
+    # Resize the image (from https://djangosnippets.org/snippets/10597/)
+    img.thumbnail(target_img_size)
+
+    if ext.lower() != "png":
+
+        # If the downloaded image has an alpha-channel: fill background
+        if img.mode in ("RGBA", "LA"):
+            logger.debug(
+                "Non-PNG image with alpha-channel will be placed on white background"
+            )
+            fill_color = (255, 255, 255, 255)
+            background = Image.new(img.mode[:-1], img.size, fill_color)
+            background.paste(img, img.split()[-1])
+            img = background
+
+        if img.mode != "RGB":
+            img = img.convert("RGB")
+
+        # After modifications, save it to the output
+        img.save(file, format="JPEG", quality=95)
+        name += "jpg"
+    else:
+        img.save(file, format="PNG", transparency=False)
+        name += "png"
+
+    file.seek(0)
+    return name
